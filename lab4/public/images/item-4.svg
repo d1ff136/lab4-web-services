@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-label="Комплект">
+  <rect width="400" height="400" fill="#e4dccd"/>
+  <ellipse cx="200" cy="352" rx="120" ry="12" fill="#233039" opacity=".12"/>
+  <path d="M110 70h70l-8 105h-60Z" fill="#d8bf7a"/>
+  <path d="M75 100l35-30 10 65-40 15Z" fill="#c4a95f"/>
+  <path d="M225 190h80l25 145h-45l-20-95-20 95h-45Z" fill="#3f6f87"/>
+  <path d="M225 190h80v22h-80Z" fill="#233039"/>
+  <path d="M120 175h50l10 160h-70Z" fill="#a86037"/>
+</svg>

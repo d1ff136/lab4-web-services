@@ -1,0 +1,723 @@
+{
+    "info":  {
+                 "name":  "Lab 3 — Catalog API",
+                 "schema":  "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+             },
+    "variable":  [
+                     {
+                         "key":  "base_url",
+                         "value":  "http://localhost:8080"
+                     },
+                     {
+                         "key":  "known_slug",
+                         "value":  ""
+                     },
+                     {
+                         "key":  "category",
+                         "value":  ""
+                     },
+                     {
+                         "key":  "operation",
+                         "value":  ""
+                     },
+                     {
+                         "key":  "search",
+                         "value":  ""
+                     }
+                 ],
+    "item":  [
+                 {
+                     "request":  {
+                                     "method":  "GET",
+                                     "url":  {
+                                                 "query":  [
+
+                                                           ],
+                                                 "host":  [
+                                                              "{{base_url}}"
+                                                          ],
+                                                 "raw":  "{{base_url}}/api/catalog",
+                                                 "path":  [
+                                                              "api",
+                                                              "catalog"
+                                                          ]
+                                             },
+                                     "header":  [
+                                                    {
+                                                        "key":  "Accept",
+                                                        "value":  "application/json"
+                                                    }
+                                                ]
+                                 },
+                     "name":  "01 Список продуктів",
+                     "event":  [
+                                   {
+                                       "script":  {
+                                                      "exec":  [
+                                                                   "pm.test(\u0027Статус 200\u0027, () =\u003e { pm.response.to.have.status(200); });",
+                                                                   "pm.test(\u0027Формат JSON\u0027, () =\u003e { pm.expect(pm.response.headers.get(\u0027Content-Type\u0027)).to.include(\u0027application/json\u0027); });",
+                                                                   "const body = pm.response.json();",
+                                                                   "pm.test(\u0027Перші 9 продуктів із 12\u0027, () =\u003e {",
+                                                                   "  pm.expect(body.data).to.be.an(\u0027array\u0027).with.lengthOf(9);",
+                                                                   "  pm.expect(body.meta.total).to.eql(12);",
+                                                                   "});",
+                                                                   "pm.test(\u0027Є links і meta\u0027, () =\u003e {",
+                                                                   "  pm.expect(body).to.have.property(\u0027links\u0027);",
+                                                                   "  pm.expect(body.meta).to.have.property(\u0027current_page\u0027, 1);",
+                                                                   "});",
+                                                                   "const first = body.data[0];",
+                                                                   "pm.collectionVariables.set(\u0027known_slug\u0027, first.slug);",
+                                                                   "pm.collectionVariables.set(\u0027category\u0027, first.category);",
+                                                                   "pm.collectionVariables.set(\u0027operation\u0027, first.operation);",
+                                                                   "pm.collectionVariables.set(\u0027search\u0027, first.title);"
+                                                               ],
+                                                      "type":  "text/javascript"
+                                                  },
+                                       "listen":  "test"
+                                   }
+                               ]
+                 },
+                 {
+                     "request":  {
+                                     "method":  "GET",
+                                     "url":  {
+                                                 "query":  [
+
+                                                           ],
+                                                 "host":  [
+                                                              "{{base_url}}"
+                                                          ],
+                                                 "raw":  "{{base_url}}/api/catalog/{{known_slug}}",
+                                                 "path":  [
+                                                              "api",
+                                                              "catalog",
+                                                              "{{known_slug}}"
+                                                          ]
+                                             },
+                                     "header":  [
+                                                    {
+                                                        "key":  "Accept",
+                                                        "value":  "application/json"
+                                                    }
+                                                ]
+                                 },
+                     "name":  "02 Продукт за slug",
+                     "event":  [
+                                   {
+                                       "script":  {
+                                                      "exec":  [
+                                                                   "pm.test(\u0027Статус 200\u0027, () =\u003e { pm.response.to.have.status(200); });",
+                                                                   "pm.test(\u0027Формат JSON\u0027, () =\u003e { pm.expect(pm.response.headers.get(\u0027Content-Type\u0027)).to.include(\u0027application/json\u0027); });",
+                                                                   "const body = pm.response.json();",
+                                                                   "pm.test(\u0027Той самий slug, назва, ціна та категорія\u0027, () =\u003e {",
+                                                                   "  const p = body.data;",
+                                                                   "  pm.expect(p.slug).to.eql(pm.collectionVariables.get(\u0027known_slug\u0027));",
+                                                                   "  pm.expect(p.title).to.be.a(\u0027string\u0027).and.not.empty;",
+                                                                   "  pm.expect(p.price).to.match(/^\\d+\\.\\d{2}$/);",
+                                                                   "  pm.expect(p.category).to.be.a(\u0027string\u0027).and.not.empty;",
+                                                                   "  pm.expect(p.published_at).to.match(/^\\d{4}-\\d{2}-\\d{2}$/);",
+                                                                   "});"
+                                                               ],
+                                                      "type":  "text/javascript"
+                                                  },
+                                       "listen":  "test"
+                                   }
+                               ]
+                 },
+                 {
+                     "request":  {
+                                     "method":  "GET",
+                                     "url":  {
+                                                 "query":  [
+                                                               {
+                                                                   "key":  "q",
+                                                                   "value":  "{{search}}"
+                                                               }
+                                                           ],
+                                                 "host":  [
+                                                              "{{base_url}}"
+                                                          ],
+                                                 "raw":  "{{base_url}}/api/catalog?q={{search}}",
+                                                 "path":  [
+                                                              "api",
+                                                              "catalog"
+                                                          ]
+                                             },
+                                     "header":  [
+                                                    {
+                                                        "key":  "Accept",
+                                                        "value":  "application/json"
+                                                    }
+                                                ]
+                                 },
+                     "name":  "03 Пошук за назвою",
+                     "event":  [
+                                   {
+                                       "script":  {
+                                                      "exec":  [
+                                                                   "pm.test(\u0027Статус 200\u0027, () =\u003e { pm.response.to.have.status(200); });",
+                                                                   "pm.test(\u0027Формат JSON\u0027, () =\u003e { pm.expect(pm.response.headers.get(\u0027Content-Type\u0027)).to.include(\u0027application/json\u0027); });",
+                                                                   "const body = pm.response.json();",
+                                                                   "pm.test(\u0027Знайдено продукт зі збереженою назвою\u0027, () =\u003e {",
+                                                                   "  pm.expect(body.data.length).to.be.above(0);",
+                                                                   "  pm.expect(body.data.some(p =\u003e p.title === pm.collectionVariables.get(\u0027search\u0027))).to.be.true;",
+                                                                   "});"
+                                                               ],
+                                                      "type":  "text/javascript"
+                                                  },
+                                       "listen":  "test"
+                                   }
+                               ]
+                 },
+                 {
+                     "request":  {
+                                     "method":  "GET",
+                                     "url":  {
+                                                 "query":  [
+                                                               {
+                                                                   "key":  "category",
+                                                                   "value":  "{{category}}"
+                                                               },
+                                                               {
+                                                                   "key":  "operation",
+                                                                   "value":  "{{operation}}"
+                                                               }
+                                                           ],
+                                                 "host":  [
+                                                              "{{base_url}}"
+                                                          ],
+                                                 "raw":  "{{base_url}}/api/catalog?category={{category}}\u0026operation={{operation}}",
+                                                 "path":  [
+                                                              "api",
+                                                              "catalog"
+                                                          ]
+                                             },
+                                     "header":  [
+                                                    {
+                                                        "key":  "Accept",
+                                                        "value":  "application/json"
+                                                    }
+                                                ]
+                                 },
+                     "name":  "04 Категорія та спосіб угоди",
+                     "event":  [
+                                   {
+                                       "script":  {
+                                                      "exec":  [
+                                                                   "pm.test(\u0027Статус 200\u0027, () =\u003e { pm.response.to.have.status(200); });",
+                                                                   "pm.test(\u0027Формат JSON\u0027, () =\u003e { pm.expect(pm.response.headers.get(\u0027Content-Type\u0027)).to.include(\u0027application/json\u0027); });",
+                                                                   "const body = pm.response.json();",
+                                                                   "pm.test(\u0027Кожен результат відповідає обом фільтрам\u0027, () =\u003e {",
+                                                                   "  pm.expect(body.data.length).to.be.above(0);",
+                                                                   "  body.data.forEach(p =\u003e {",
+                                                                   "    pm.expect(p.category).to.eql(pm.collectionVariables.get(\u0027category\u0027));",
+                                                                   "    pm.expect(p.operation).to.eql(pm.collectionVariables.get(\u0027operation\u0027));",
+                                                                   "  });",
+                                                                   "});"
+                                                               ],
+                                                      "type":  "text/javascript"
+                                                  },
+                                       "listen":  "test"
+                                   }
+                               ]
+                 },
+                 {
+                     "request":  {
+                                     "method":  "GET",
+                                     "url":  {
+                                                 "query":  [
+                                                               {
+                                                                   "key":  "sort",
+                                                                   "value":  "price_asc"
+                                                               },
+                                                               {
+                                                                   "key":  "per_page",
+                                                                   "value":  "12"
+                                                               }
+                                                           ],
+                                                 "host":  [
+                                                              "{{base_url}}"
+                                                          ],
+                                                 "raw":  "{{base_url}}/api/catalog?sort=price_asc\u0026per_page=12",
+                                                 "path":  [
+                                                              "api",
+                                                              "catalog"
+                                                          ]
+                                             },
+                                     "header":  [
+                                                    {
+                                                        "key":  "Accept",
+                                                        "value":  "application/json"
+                                                    }
+                                                ]
+                                 },
+                     "name":  "05 Сортування від дешевших",
+                     "event":  [
+                                   {
+                                       "script":  {
+                                                      "exec":  [
+                                                                   "pm.test(\u0027Статус 200\u0027, () =\u003e { pm.response.to.have.status(200); });",
+                                                                   "pm.test(\u0027Формат JSON\u0027, () =\u003e { pm.expect(pm.response.headers.get(\u0027Content-Type\u0027)).to.include(\u0027application/json\u0027); });",
+                                                                   "const body = pm.response.json();",
+                                                                   "pm.test(\u002712 продуктів за неспаданням ціни\u0027, () =\u003e {",
+                                                                   "  const prices = body.data.map(p =\u003e parseFloat(p.price));",
+                                                                   "  pm.expect(prices).to.have.lengthOf(12);",
+                                                                   "  prices.forEach((price, i) =\u003e { if (i \u003e 0) pm.expect(price).to.be.at.least(prices[i - 1]); });",
+                                                                   "});"
+                                                               ],
+                                                      "type":  "text/javascript"
+                                                  },
+                                       "listen":  "test"
+                                   }
+                               ]
+                 },
+                 {
+                     "request":  {
+                                     "method":  "GET",
+                                     "url":  {
+                                                 "query":  [
+                                                               {
+                                                                   "key":  "sort",
+                                                                   "value":  "price_desc"
+                                                               },
+                                                               {
+                                                                   "key":  "per_page",
+                                                                   "value":  "12"
+                                                               }
+                                                           ],
+                                                 "host":  [
+                                                              "{{base_url}}"
+                                                          ],
+                                                 "raw":  "{{base_url}}/api/catalog?sort=price_desc\u0026per_page=12",
+                                                 "path":  [
+                                                              "api",
+                                                              "catalog"
+                                                          ]
+                                             },
+                                     "header":  [
+                                                    {
+                                                        "key":  "Accept",
+                                                        "value":  "application/json"
+                                                    }
+                                                ]
+                                 },
+                     "name":  "06 Сортування від дорожчих",
+                     "event":  [
+                                   {
+                                       "script":  {
+                                                      "exec":  [
+                                                                   "pm.test(\u0027Статус 200\u0027, () =\u003e { pm.response.to.have.status(200); });",
+                                                                   "pm.test(\u0027Формат JSON\u0027, () =\u003e { pm.expect(pm.response.headers.get(\u0027Content-Type\u0027)).to.include(\u0027application/json\u0027); });",
+                                                                   "const body = pm.response.json();",
+                                                                   "pm.test(\u002712 продуктів за незростанням ціни\u0027, () =\u003e {",
+                                                                   "  const prices = body.data.map(p =\u003e parseFloat(p.price));",
+                                                                   "  pm.expect(prices).to.have.lengthOf(12);",
+                                                                   "  prices.forEach((price, i) =\u003e { if (i \u003e 0) pm.expect(price).to.be.at.most(prices[i - 1]); });",
+                                                                   "});"
+                                                               ],
+                                                      "type":  "text/javascript"
+                                                  },
+                                       "listen":  "test"
+                                   }
+                               ]
+                 },
+                 {
+                     "request":  {
+                                     "method":  "GET",
+                                     "url":  {
+                                                 "query":  [
+                                                               {
+                                                                   "key":  "page",
+                                                                   "value":  "2"
+                                                               }
+                                                           ],
+                                                 "host":  [
+                                                              "{{base_url}}"
+                                                          ],
+                                                 "raw":  "{{base_url}}/api/catalog?page=2",
+                                                 "path":  [
+                                                              "api",
+                                                              "catalog"
+                                                          ]
+                                             },
+                                     "header":  [
+                                                    {
+                                                        "key":  "Accept",
+                                                        "value":  "application/json"
+                                                    }
+                                                ]
+                                 },
+                     "name":  "07 Друга сторінка",
+                     "event":  [
+                                   {
+                                       "script":  {
+                                                      "exec":  [
+                                                                   "pm.test(\u0027Статус 200\u0027, () =\u003e { pm.response.to.have.status(200); });",
+                                                                   "pm.test(\u0027Формат JSON\u0027, () =\u003e { pm.expect(pm.response.headers.get(\u0027Content-Type\u0027)).to.include(\u0027application/json\u0027); });",
+                                                                   "const body = pm.response.json();",
+                                                                   "pm.test(\u0027Друга сторінка: 3 продукти (10–12)\u0027, () =\u003e {",
+                                                                   "  pm.expect(body.meta.current_page).to.eql(2);",
+                                                                   "  pm.expect(body.data).to.have.lengthOf(3);",
+                                                                   "  pm.expect(body.meta.from).to.eql(10);",
+                                                                   "  pm.expect(body.meta.to).to.eql(12);",
+                                                                   "  pm.expect(body.links.next).to.be.null;",
+                                                                   "});"
+                                                               ],
+                                                      "type":  "text/javascript"
+                                                  },
+                                       "listen":  "test"
+                                   }
+                               ]
+                 },
+                 {
+                     "request":  {
+                                     "method":  "GET",
+                                     "url":  {
+                                                 "query":  [
+                                                               {
+                                                                   "key":  "q",
+                                                                   "value":  "absent-lab3-product"
+                                                               }
+                                                           ],
+                                                 "host":  [
+                                                              "{{base_url}}"
+                                                          ],
+                                                 "raw":  "{{base_url}}/api/catalog?q=absent-lab3-product",
+                                                 "path":  [
+                                                              "api",
+                                                              "catalog"
+                                                          ]
+                                             },
+                                     "header":  [
+                                                    {
+                                                        "key":  "Accept",
+                                                        "value":  "application/json"
+                                                    }
+                                                ]
+                                 },
+                     "name":  "08 Порожній результат",
+                     "event":  [
+                                   {
+                                       "script":  {
+                                                      "exec":  [
+                                                                   "pm.test(\u0027Статус 200\u0027, () =\u003e { pm.response.to.have.status(200); });",
+                                                                   "pm.test(\u0027Формат JSON\u0027, () =\u003e { pm.expect(pm.response.headers.get(\u0027Content-Type\u0027)).to.include(\u0027application/json\u0027); });",
+                                                                   "const body = pm.response.json();",
+                                                                   "pm.test(\u0027Порожній data та meta.total = 0\u0027, () =\u003e {",
+                                                                   "  pm.expect(body.data).to.be.an(\u0027array\u0027).that.is.empty;",
+                                                                   "  pm.expect(body.meta.total).to.eql(0);",
+                                                                   "});"
+                                                               ],
+                                                      "type":  "text/javascript"
+                                                  },
+                                       "listen":  "test"
+                                   }
+                               ]
+                 },
+                 {
+                     "request":  {
+                                     "method":  "GET",
+                                     "url":  {
+                                                 "query":  [
+                                                               {
+                                                                   "key":  "sort",
+                                                                   "value":  "invalid"
+                                                               }
+                                                           ],
+                                                 "host":  [
+                                                              "{{base_url}}"
+                                                          ],
+                                                 "raw":  "{{base_url}}/api/catalog?sort=invalid",
+                                                 "path":  [
+                                                              "api",
+                                                              "catalog"
+                                                          ]
+                                             },
+                                     "header":  [
+                                                    {
+                                                        "key":  "Accept",
+                                                        "value":  "application/json"
+                                                    }
+                                                ]
+                                 },
+                     "name":  "09 Помилка sort",
+                     "event":  [
+                                   {
+                                       "script":  {
+                                                      "exec":  [
+                                                                   "pm.test(\u0027Статус 422\u0027, () =\u003e { pm.response.to.have.status(422); });",
+                                                                   "pm.test(\u0027Формат JSON\u0027, () =\u003e { pm.expect(pm.response.headers.get(\u0027Content-Type\u0027)).to.include(\u0027application/json\u0027); });",
+                                                                   "const body = pm.response.json();",
+                                                                   "pm.test(\u0027Повідомлення в errors.sort\u0027, () =\u003e {",
+                                                                   "  pm.expect(body.message).to.be.a(\u0027string\u0027);",
+                                                                   "  pm.expect(body.errors.sort).to.be.an(\u0027array\u0027).that.is.not.empty;",
+                                                                   "});"
+                                                               ],
+                                                      "type":  "text/javascript"
+                                                  },
+                                       "listen":  "test"
+                                   }
+                               ]
+                 },
+                 {
+                     "request":  {
+                                     "method":  "GET",
+                                     "url":  {
+                                                 "query":  [
+                                                               {
+                                                                   "key":  "page",
+                                                                   "value":  "0"
+                                                               }
+                                                           ],
+                                                 "host":  [
+                                                              "{{base_url}}"
+                                                          ],
+                                                 "raw":  "{{base_url}}/api/catalog?page=0",
+                                                 "path":  [
+                                                              "api",
+                                                              "catalog"
+                                                          ]
+                                             },
+                                     "header":  [
+                                                    {
+                                                        "key":  "Accept",
+                                                        "value":  "application/json"
+                                                    }
+                                                ]
+                                 },
+                     "name":  "10 Помилка page",
+                     "event":  [
+                                   {
+                                       "script":  {
+                                                      "exec":  [
+                                                                   "pm.test(\u0027Статус 422\u0027, () =\u003e { pm.response.to.have.status(422); });",
+                                                                   "pm.test(\u0027Формат JSON\u0027, () =\u003e { pm.expect(pm.response.headers.get(\u0027Content-Type\u0027)).to.include(\u0027application/json\u0027); });",
+                                                                   "const body = pm.response.json();",
+                                                                   "pm.test(\u0027Повідомлення в errors.page\u0027, () =\u003e {",
+                                                                   "  pm.expect(body.errors.page).to.be.an(\u0027array\u0027).that.is.not.empty;",
+                                                                   "});"
+                                                               ],
+                                                      "type":  "text/javascript"
+                                                  },
+                                       "listen":  "test"
+                                   }
+                               ]
+                 },
+                 {
+                     "request":  {
+                                     "method":  "GET",
+                                     "url":  {
+                                                 "query":  [
+                                                               {
+                                                                   "key":  "per_page",
+                                                                   "value":  "10000"
+                                                               }
+                                                           ],
+                                                 "host":  [
+                                                              "{{base_url}}"
+                                                          ],
+                                                 "raw":  "{{base_url}}/api/catalog?per_page=10000",
+                                                 "path":  [
+                                                              "api",
+                                                              "catalog"
+                                                          ]
+                                             },
+                                     "header":  [
+                                                    {
+                                                        "key":  "Accept",
+                                                        "value":  "application/json"
+                                                    }
+                                                ]
+                                 },
+                     "name":  "11 Помилка per_page",
+                     "event":  [
+                                   {
+                                       "script":  {
+                                                      "exec":  [
+                                                                   "pm.test(\u0027Статус 422\u0027, () =\u003e { pm.response.to.have.status(422); });",
+                                                                   "pm.test(\u0027Формат JSON\u0027, () =\u003e { pm.expect(pm.response.headers.get(\u0027Content-Type\u0027)).to.include(\u0027application/json\u0027); });",
+                                                                   "const body = pm.response.json();",
+                                                                   "pm.test(\u0027Повідомлення в errors.per_page\u0027, () =\u003e {",
+                                                                   "  pm.expect(body.errors.per_page).to.be.an(\u0027array\u0027).that.is.not.empty;",
+                                                                   "});"
+                                                               ],
+                                                      "type":  "text/javascript"
+                                                  },
+                                       "listen":  "test"
+                                   }
+                               ]
+                 },
+                 {
+                     "request":  {
+                                     "method":  "GET",
+                                     "url":  {
+                                                 "query":  [
+                                                               {
+                                                                   "key":  "category",
+                                                                   "value":  "Unknown-category"
+                                                               }
+                                                           ],
+                                                 "host":  [
+                                                              "{{base_url}}"
+                                                          ],
+                                                 "raw":  "{{base_url}}/api/catalog?category=Unknown-category",
+                                                 "path":  [
+                                                              "api",
+                                                              "catalog"
+                                                          ]
+                                             },
+                                     "header":  [
+                                                    {
+                                                        "key":  "Accept",
+                                                        "value":  "application/json"
+                                                    }
+                                                ]
+                                 },
+                     "name":  "12 Невідома категорія",
+                     "event":  [
+                                   {
+                                       "script":  {
+                                                      "exec":  [
+                                                                   "pm.test(\u0027Статус 422\u0027, () =\u003e { pm.response.to.have.status(422); });",
+                                                                   "pm.test(\u0027Формат JSON\u0027, () =\u003e { pm.expect(pm.response.headers.get(\u0027Content-Type\u0027)).to.include(\u0027application/json\u0027); });",
+                                                                   "const body = pm.response.json();",
+                                                                   "pm.test(\u0027Повідомлення в errors.category\u0027, () =\u003e {",
+                                                                   "  pm.expect(body.errors.category).to.be.an(\u0027array\u0027).that.is.not.empty;",
+                                                                   "});"
+                                                               ],
+                                                      "type":  "text/javascript"
+                                                  },
+                                       "listen":  "test"
+                                   }
+                               ]
+                 },
+                 {
+                     "request":  {
+                                     "method":  "GET",
+                                     "url":  {
+                                                 "query":  [
+                                                               {
+                                                                   "key":  "q",
+                                                                   "value":  "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                                                               }
+                                                           ],
+                                                 "host":  [
+                                                              "{{base_url}}"
+                                                          ],
+                                                 "raw":  "{{base_url}}/api/catalog?q=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                                                 "path":  [
+                                                              "api",
+                                                              "catalog"
+                                                          ]
+                                             },
+                                     "header":  [
+                                                    {
+                                                        "key":  "Accept",
+                                                        "value":  "application/json"
+                                                    }
+                                                ]
+                                 },
+                     "name":  "13 Занадто довгий пошук",
+                     "event":  [
+                                   {
+                                       "script":  {
+                                                      "exec":  [
+                                                                   "pm.test(\u0027Статус 422\u0027, () =\u003e { pm.response.to.have.status(422); });",
+                                                                   "pm.test(\u0027Формат JSON\u0027, () =\u003e { pm.expect(pm.response.headers.get(\u0027Content-Type\u0027)).to.include(\u0027application/json\u0027); });",
+                                                                   "const body = pm.response.json();",
+                                                                   "pm.test(\u0027Повідомлення в errors.q\u0027, () =\u003e {",
+                                                                   "  pm.expect(body.errors.q).to.be.an(\u0027array\u0027).that.is.not.empty;",
+                                                                   "});"
+                                                               ],
+                                                      "type":  "text/javascript"
+                                                  },
+                                       "listen":  "test"
+                                   }
+                               ]
+                 },
+                 {
+                     "request":  {
+                                     "method":  "GET",
+                                     "url":  {
+                                                 "query":  [
+
+                                                           ],
+                                                 "host":  [
+                                                              "{{base_url}}"
+                                                          ],
+                                                 "raw":  "{{base_url}}/api/catalog/missing-product",
+                                                 "path":  [
+                                                              "api",
+                                                              "catalog",
+                                                              "missing-product"
+                                                          ]
+                                             },
+                                     "header":  [
+                                                    {
+                                                        "key":  "Accept",
+                                                        "value":  "application/json"
+                                                    }
+                                                ]
+                                 },
+                     "name":  "14 Невідомий продукт",
+                     "event":  [
+                                   {
+                                       "script":  {
+                                                      "exec":  [
+                                                                   "pm.test(\u0027Статус 404\u0027, () =\u003e { pm.response.to.have.status(404); });",
+                                                                   "pm.test(\u0027Формат JSON\u0027, () =\u003e { pm.expect(pm.response.headers.get(\u0027Content-Type\u0027)).to.include(\u0027application/json\u0027); });",
+                                                                   "const body = pm.response.json();",
+                                                                   "pm.test(\u0027JSON-повідомлення про відсутній продукт\u0027, () =\u003e {",
+                                                                   "  pm.expect(body.message).to.be.a(\u0027string\u0027).and.not.empty;",
+                                                                   "});"
+                                                               ],
+                                                      "type":  "text/javascript"
+                                                  },
+                                       "listen":  "test"
+                                   }
+                               ]
+                 },
+                 {
+                     "request":  {
+                                     "method":  "GET",
+                                     "url":  {
+                                                 "query":  [
+
+                                                           ],
+                                                 "host":  [
+                                                              "{{base_url}}"
+                                                          ],
+                                                 "raw":  "{{base_url}}/api/missing/page",
+                                                 "path":  [
+                                                              "api",
+                                                              "missing",
+                                                              "page"
+                                                          ]
+                                             },
+                                     "header":  [
+                                                    {
+                                                        "key":  "Accept",
+                                                        "value":  "application/json"
+                                                    }
+                                                ]
+                                 },
+                     "name":  "15 Невідомий маршрут",
+                     "event":  [
+                                   {
+                                       "script":  {
+                                                      "exec":  [
+                                                                   "pm.test(\u0027Статус 404\u0027, () =\u003e { pm.response.to.have.status(404); });",
+                                                                   "pm.test(\u0027Формат JSON\u0027, () =\u003e { pm.expect(pm.response.headers.get(\u0027Content-Type\u0027)).to.include(\u0027application/json\u0027); });",
+                                                                   "const body = pm.response.json();",
+                                                                   "pm.test(\u0027JSON-помилка невідомого маршруту\u0027, () =\u003e {",
+                                                                   "  pm.expect(body.message).to.be.a(\u0027string\u0027).and.not.empty;",
+                                                                   "});"
+                                                               ],
+                                                      "type":  "text/javascript"
+                                                  },
+                                       "listen":  "test"
+                                   }
+                               ]
+                 }
+             ]
+}

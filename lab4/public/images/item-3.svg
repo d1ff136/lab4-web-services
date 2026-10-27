@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-label="Костюм">
+  <rect width="400" height="400" fill="#e4dccd"/>
+  <ellipse cx="200" cy="352" rx="120" ry="12" fill="#233039" opacity=".12"/>
+  <path d="M130 55l70 60 70-60 45 45-25 210H110L85 100Z" fill="#233039"/>
+  <path d="M130 55l70 60V310" fill="none" stroke="#667780" stroke-width="4"/>
+  <path d="M200 115l-25 70 25 20 25-20Z" fill="#fbfcfc"/>
+  <path d="M200 130l-9 12 9 40 9-40Z" fill="#a86037"/>
+</svg>

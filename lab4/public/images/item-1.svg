@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-label="Сорочка">
+  <rect width="400" height="400" fill="#e4dccd"/>
+  <ellipse cx="200" cy="352" rx="120" ry="12" fill="#233039" opacity=".12"/>
+  <path d="M140 60 200 84 260 60 330 100 300 170 270 150V330H130V150L100 170 70 100Z" fill="#3f6f87"/>
+  <path d="M140 60 200 120 260 60 200 84Z" fill="#fbfcfc"/>
+  <path d="M200 120V330" stroke="#233039" stroke-width="3" opacity=".35"/>
+  <g fill="#fbfcfc"><circle cx="200" cy="160" r="4"/><circle cx="200" cy="200" r="4"/><circle cx="200" cy="240" r="4"/><circle cx="200" cy="280" r="4"/></g>
+</svg>

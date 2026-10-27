@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-label="Куртка">
+  <rect width="400" height="400" fill="#e4dccd"/>
+  <ellipse cx="200" cy="352" rx="120" ry="12" fill="#233039" opacity=".12"/>
+  <path d="M135 55h130l65 55-25 90-30-15v150H125V185l-30 15-25-90Z" fill="#a86037"/>
+  <path d="M135 55l65 45 65-45" fill="none" stroke="#7a4328" stroke-width="10" stroke-linejoin="round"/>
+  <path d="M200 100V335" stroke="#7a4328" stroke-width="6"/>
+  <rect x="140" y="250" width="50" height="34" rx="6" fill="#7a4328" opacity=".55"/>
+  <rect x="210" y="250" width="50" height="34" rx="6" fill="#7a4328" opacity=".55"/>
+</svg>
